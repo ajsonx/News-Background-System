@@ -41,7 +41,7 @@
       <div class="row cl">
         <div class="formControls col-xs-8 col-xs-offset-3">
           <input class="input-text size-L" type="text" placeholder="验证码"  name="code" value="" style="width:150px;">
-         <img src="/captcha" alt="点击更新验证码" onclick="reloadcode(this)"/>
+         <img src="http://39.108.115.17:80/index.php/captcha" alt="点击更新验证码" onclick="reloadcode(this)"/>
           </div>
       </div>
       <div class="row cl">
@@ -58,13 +58,12 @@
     </form>
   </div>
 </div>
-<div class="footer">singwa-app-admin</div>
 <script type="text/javascript" src="__STATIC__/huiadmin/lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="__STATIC__/huiadmin/static/h-ui/js/H-ui.min.js"></script>
 <script>
   // 刷新验证码
   function reloadcode(obj) {
-    obj.src="/captcha?id="+Math.random();
+    obj.src="http://39.108.115.17:80/index.php/captcha?id="+Math.random();
   }
 </script>
 </body>

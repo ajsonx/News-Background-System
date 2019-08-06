@@ -1,23 +1,34 @@
 <!--header-->
 {include file="public/_meta" title="娱乐资讯"/}
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 资讯管理 <span class="c-gray en">&gt;</span> 资讯列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
-<div class="page-container">
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页
+  <span class="c-gray en">&gt;</span> 资讯管理 <span class="c-gray en">&gt;</span> 资讯列表
+  <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
+    <i class="Hui-iconfont">&#xe68f;</i></a></nav>
+  <div class="page-container">
   <div class="text-c">
     <form action="{:url('news/index')}" method="get">
 	 <span class="select-box inline">
-		<select name="catid" class="select">
+		<select name="catid" class="select" value="">
           <option value="0">全部分类</option>
-
+          {volist name = "cats" id = "vo" }
+          <option value="{$key}" {if condition ="$key eq $catid" }selected="selected"
+                  {/if}>{$vo}</option>
+          {/volist}
         </select>
 		</span> 日期范围：
-      <input type="text" name="start_time" class="input-text" id="countTimestart" onfocus="" value="" style="width:120px;" >
-      -
-      <input type="text" name="end_time" class="input-text" id="countTimestart" onfocus="" value=""  style="width:120px;">
+      <input type="text" name="start_time" class="input-text" id="countTimestart" onfocus="selecttime(1)" value="{$start_time}" style="width:120px;" >
 
-      <input type="text" name="title" id="" value=" " placeholder=" 资讯名称" style="width:250px" class="input-text">
+      <input type="text" name="end_time" class="input-text" id="countTimestart" onfocus="selecttime(1)" value="{$end_time}"  style="width:120px;">
+
+      <input type="text" name="title" id="" value="{$title}" placeholder=" 资讯名称" style="width:250px" class="input-text">
       <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜资讯</button>
     </form>
   </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+      <span class="l">
+        <a class="btn btn-primary radius" data-title="添加资讯" data-href="" onclick="" href="{:url('news/add')}">
+          <i class="Hui-iconfont">&#xe600;</i> 添加资讯</a></span>
+      <span class="r">共有数据：<strong>54</strong> 条</span> </div>
 
   <div class="mt-20">
     <table class="table table-border table-bordered table-bg table-hover table-sort table-responsive" >
@@ -39,31 +50,90 @@
       <tr class="text-c">
         <td><input type="checkbox" value="" name=""></td>
         <td>{$vo.id}</td>
-        <td class="text-l"><u style="cursor:pointer" class="text-primary"  title="查看">{$vo.title}</u></td>
+        <td class="text-l"><a style="cursor:pointer" class="text-primary"  title="查看"
+                              onclick="news_show('新闻-{$vo.id}','{:url(\'news/show\')}','{$vo.id}','900','600')">{$vo.title}</a></td>
         <td>{$vo.catid|getCatName}</td>
         <td><img width="60" height="60" class="picture-thumb" src="{$vo.image}"></td>
         <td>{$vo.update_time}</td>
         <td>{$vo.is_position|isYesNo}</td>
-        <td class="td-status">{$vo.status}</td>
-        <td class="f-14 td-manage"> <a style="text-decoration:none" class="ml-5" onClick="" href="javascript:;" title="编辑">
+        <td class="td-status">{$vo.status|appStatus=$vo.id,###}
+          <a style="text-decoration:none" class="ml-5"
+             onClick="news_edit('新闻-{$vo.id}','{:url(\'news/edit\')}','{$vo.id}','900','600')"
+             href="javascript:;" title="编辑">
           <i class="Hui-iconfont">&#xe6df;</i></a>
-          <a style="text-decoration:none" class="ml-5" onClick="" href="javascript:;" title="删除" del_url="">
-            <i class="Hui-iconfont">&#xe6e2;</i></a></td>
+
+          <!--            推送            -->
+          <a style="text-decoration:cornflowerblue" class="ml-5"
+             onClick="app_push(this)" href="javascript:;" title="推送"
+            push_url="{:url('news/jpush',['id' => $vo.id,'mod' => 'news'])}">
+            <i class="Hui-iconfont">&#xe642;</i></a>
+
+          <a style="text-decoration:none" class="ml-5" onClick="app_del(this)" href="javascript:;" title="删除"
+             del_url="{:url('news/delete',['id' => $vo.id,'mod' => 'news'])}">
+          <i class="Hui-iconfont">&#xe6e2;</i></a>
+        </td></td>
       </tr>
       {/volist}
       </tbody>
     </table>
     <div id="laypage"></div>
   </div>
-{:pagination($news)}
+
 </div>
 <!--header-->
 {include file="public/_footer" /}
 
 <!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="__STATIC__/hadmin/lib/My97DatePicker/4.8/WdatePicker.js"></script>
-<script type="text/javascript" src="__STATIC__/hadmin/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    var url = '{:url("news/index")}'+'?{$query}';
 
+    laypage({
+        cont:'laypage',
+        pages:'{$pageTotal}', //总页数
+        skin:'#5FB878',
+        curr:'{$curr}',
+        jump: function(e,first){  //e 对象 first 触发后的回调
+            if(!first){
+
+                // 用?传递第一个参数，用&连接多个参数
+                location.href = url + '&page=' + e.curr; //这是跳转请求链接，传递page参数url?page=鼠标点击的curr 当前页
+            }
+        }
+    });
+</script>
+<script>
+    /*新闻-显示*/
+    function news_show(title,url,id,w,h){
+        url = url +'?id='+id;
+        layer_show(title,url,w,h);
+    }
+    /*新闻-编辑*/
+    function news_edit(title,url,id,w,h){
+        url = url +'?id='+id;
+        layer_show(title,url,w,h);
+    }
+    /*新闻-推送*/
+    function jpush(obj,id){
+        url = $(obj).attr('confirm_url')+'?status=1';
+        layer.confirm('确认要发布吗？',function(index){
+            $.ajax({
+                type: 'POST',
+                url: url,
+                dataType: 'json',
+                success: function (data) {
+                    layer.msg('推送成功!',{icon: 6,time:2000});
+                    self.location=data.data.confirm_url;
+                },
+                error: function (data) {
+                    layer.msg('推送失败!',{icon:1,time:1000});
+                }
+            });
+            layer.msg('已发布!',{icon: 6,time:1000});
+        });
+    }
+</script>
 <style>
   .imooc-app .pagination li{display:inline; padding-left:10px;}
   .pagination .active{color:red}

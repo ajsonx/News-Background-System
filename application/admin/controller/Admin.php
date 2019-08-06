@@ -4,6 +4,11 @@ use app\common\model\AdminUser;
 use think\Controller;
 class Admin extends Controller
 {
+
+    /**
+     * 增加管理员
+     * @return mixed
+     */
     public function add(){
         if(request()->isPost()) {
             //获取post数据
@@ -26,13 +31,37 @@ class Admin extends Controller
             }
             //检验数据是否唯一
             if($id){
-                $this->success('id='.$id.'success');
+                $this->success('管理用户添加成功');
             }
             else{
-                $this->error('error');
+                $this->error('管理用户添加成功');
             }
 
         }
         else return $this->fetch();
+    }
+
+    /**
+     * 网站管理员列表信息
+     */
+    public function detail(){
+        try{
+            $user = model('AdminUser')->select();
+            $count = model('AdminUser')->count('id');
+        }catch (\Exception $e){
+            $this->error("数据查询失败");
+        }
+        return $this->fetch('',[
+            'user' => $user,
+            'count' => $count,
+        ]);
+    }
+
+    /**
+     * 网站基础信息设置
+     * @return mixed
+     */
+    public function base(){
+       return $this->fetch();
     }
 }

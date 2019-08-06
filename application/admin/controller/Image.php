@@ -16,24 +16,10 @@ use app\common\lib\Upload;
  * @package app\admin\controller
  */
 class Image extends Base{
+
     /**
      * 图片上传
-     *
      */
-   public function upload0(){
-       $file = Request::instance()->file('file');
-       $info = $file->move('upload');
-       if($info && $info->getPathname()){
-           $data = [
-               'status' => 1,
-               'message' =>'OK',
-               'data' => '/'.$info->getPathname(),
-           ];
-           echo json_encode($data);exit;
-       }
-       echo json_encode(['status' => 1,'msg' => '上传失败']);exit;
-   }
-
    public function upload(){
         $image = Upload::image();
         if($image){

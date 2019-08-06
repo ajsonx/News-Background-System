@@ -6,14 +6,21 @@
  * Time: 10:50
  */
 namespace app\admin\controller;
-
 use think\Controller;
 use think\Request;
 use app\common\lib\IAuth;
 use app\common\validate\AdminUser;
 class Login extends Base{
+    /**
+     * 继承
+     */
     public function _initialize(){
     }
+
+    /**
+     * 登陆界面显示
+     * @return mixed
+     */
     public function index(){
         $islogin = $this->isLogin();
         if($islogin){
@@ -23,6 +30,10 @@ class Login extends Base{
         }
 
     }
+
+    /**
+     * 登陆验证
+     */
     public function check(){
         if(Request()->isPost()) {
             $data=input('post.');
@@ -40,7 +51,7 @@ class Login extends Base{
             try{
                 $user = model('AdminUser')->get(['username' => $data['username']]);
             }catch (\Exception $e){
-                $this->error($e->getMessage());
+                  echo ($e->getMessage());
             }
 
             if(!$user || $user->status != config('code.status_normal')) {
@@ -62,20 +73,28 @@ class Login extends Base{
             }catch (\Exception $e){
                 $this->error($e->getMessage());
             }
-
             session(config('admin.session_user'),$user,config('admin.session_user_scope'));
-            $this->success("成功",'index/index');
+            $this->success("登陆成功",'index/index');
 
         }else{
             $this->error('NoRequest');
         }
     }
+
+    /**
+     * 登出
+     */
     public function logout(){
 
         session(null,config('admin.session_user_scope'));
 
         $this->redirect('login/index');
     }
+
+    /**
+     * 首页欢迎
+     * @return string
+     */
     public function welcome(){
         return "";
     }

@@ -1,0 +1,212 @@
+{include file="public/_meta"}
+
+
+<title>添加用户</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+</head>
+<body>
+<style type="text/css">
+	html,body{height:auto;}
+	#province select{margin-left:50px; width:100px;height:30px;font-size: medium}
+</style>
+<style type="text/css">
+	html,body{height:auto;}
+	#suggest, #suggest2 {width:200px;}
+	.gray {color:gray;}
+	.ac_results {background:#fff;border:1px solid #7f9db9;position: absolute;z-index: 10000;display: none;}
+	.ac_results li a {white-space: nowrap;text-decoration:none;display:block;color:#05a;padding:1px 3px;}
+	.ac_results li {border:1px solid #fff;}
+	.ac_over, .ac_results li a:hover {background:#c8e3fc;}
+	.ac_results li a span {float:right;}
+	.ac_result_tip {border-bottom:1px dashed #666;padding:3px;}
+</style>
+<article class="page-container">
+	<form action="" url="{:url('member/add')}" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>用户名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+				<div class="radio-box">
+					<input name="sex" type="radio" id="sex-1" value="1" checked>
+					<label for="sex-1">男</label>
+				</div>
+				<div class="radio-box">
+					<input type="radio" id="sex-2" value="0" name="sex">
+					<label for="sex-2">女</label>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="tel" name="tel">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" placeholder="@" name="email" id="email">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所在城市：</label>
+			<div id="province" name="province"></div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">备注：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea name="signature" cols="" rows="" class="textarea"  placeholder="说点什么...最少输入10个字符" onKeyUp="$.Huitextarealength(this,100)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+
+{include file="public/_footer"}
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/city/jquery.provincesCity.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/city/provincesData.js"></script>
+<script type="text/javascript" src="http://lib.h-ui.net/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/city/airCity.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/city/dimensions.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/city/suggest.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/huiadmin/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $.fn.ProvinceCity = function(){
+        var _self = this;
+        //定义3个默认值
+        _self.data("province",["请选择", "请选择"]);
+        _self.data("city1",["请选择", "请选择"]);
+        _self.data("city2",["请选择", "请选择"]);
+        //插入3个空的下拉框
+        _self.append("<select name='province'></select>");
+        _self.append("<select name='city1'></select>");
+        _self.append("<select name='city2'></select>");
+        //分别获取3个下拉框
+        var $sel1 = _self.find("select").eq(0);
+        var $sel2 = _self.find("select").eq(1);
+        var $sel3 = _self.find("select").eq(2);
+        //默认省级下拉
+        if(_self.data("province")){
+            $sel1.append("<option value='"+_self.data("province")[1]+"'>"+_self.data("province")[0]+"</option>");
+        }
+        $.each( GP , function(index,data){
+            $sel1.append("<option value='"+data+"'>"+data+"</option>");
+        });
+        //默认的1级城市下拉
+        if(_self.data("city1")){
+            $sel2.append("<option value='"+_self.data("city1")[1]+"'>"+_self.data("city1")[0]+"</option>");
+        }
+        //默认的2级城市下拉
+        if(_self.data("city2")){
+            $sel3.append("<option value='"+_self.data("city2")[1]+"'>"+_self.data("city2")[0]+"</option>");
+        }
+        //省级联动 控制
+        var index1 = "" ;
+        $sel1.change(function(){
+            //清空其它2个下拉框
+            $sel2[0].options.length=0;
+            $sel3[0].options.length=0;
+            index1 = this.selectedIndex;
+            if(index1==0){	//当选择的为 “请选择” 时
+                if(_self.data("city1")){
+                    $sel2.append("<option value='"+_self.data("city1")[1]+"'>"+_self.data("city1")[0]+"</option>");
+                }
+                if(_self.data("city2")){
+                    $sel3.append("<option value='"+_self.data("city2")[1]+"'>"+_self.data("city2")[0]+"</option>");
+                }
+            }else{
+                $.each( GT[index1-1] , function(index,data){
+                    $sel2.append("<option value='"+data+"'>"+data+"</option>");
+                });
+                $.each( GC[index1-1][0] , function(index,data){
+                    $sel3.append("<option value='"+data+"'>"+data+"</option>");
+                })
+            }
+        }).change();
+        //1级城市联动 控制
+        var index2 = "" ;
+        $sel2.change(function(){
+            $sel3[0].options.length=0;
+            index2 = this.selectedIndex;
+            $.each( GC[index1-1][index2] , function(index,data){
+                $sel3.append("<option value='"+data+"'>"+data+"</option>");
+            })
+        });
+        return _self;
+    };
+</script>
+<script type="text/javascript">
+    $(function(){
+        $("#arrcity").suggest(citys,{hot_list:commoncitys,dataContainer:'#arrcity_3word',onSelect:function(){$("#city2").click()},attachObject:'#suggest'});
+        $("#city2").suggest(citys,{hot_list:commoncitys,attachObject:"#suggest2"})});
+    $(function(){
+        $("#province").ProvinceCity()
+    });
+</script>
+<script type="text/javascript">
+$(function(){
+	
+	$("#form-member-add").validate({
+		rules:{
+			name:{
+				required:true,
+				minlength:2,
+				maxlength:16
+			},
+			sex:{
+				required:true,
+			},
+			tel:{
+				required:true,
+				isMobile:true,
+			},
+			email:{
+				required:true,
+				email:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+            var data = $(form).serialize();
+            url =$(form).attr('url');
+            //js ajax
+            $.post(url,data,function (result) {
+                if(result.code == 0){
+                    layer.msg(result.msg,{icon:5, time:2000},function () {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    })
+                }else{
+                    //parent.$('.btn-refresh').click();
+                    layer.msg("添加用户成功",{icon:1, time:2000},function () {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }
+            },'JSON');
+		}
+	});
+});
+
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

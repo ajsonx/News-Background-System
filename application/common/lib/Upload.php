@@ -22,6 +22,7 @@ class Upload {
      */
     public static function image(){
         //
+
         if(empty($_FILES['file']['tmp_name'])){
             exception('404');
         }
@@ -34,8 +35,7 @@ class Upload {
         //获取文件的缓存路径
         $object = $_FILES['file']['tmp_name'];
         //自定义文件名
-        $content = Session::get('adminuser.username',config('admin.session_user_scope')).
-            "/".date('Y.m.d').'/'.md5(substr($object,0,5)).rand(0,9999).'.'.$ext;
+        $content = date('Y.m.d').'/'.md5(substr($object,0,5)).rand(0,9999).'.'.$ext;
         //阿里云OSS上传文件
         try {
             $ossClient = new OssClient($config['ak'], $config['sk'], $config['url']);

@@ -1,0 +1,9 @@
+.idea
+composer.lock
+*.log
+thinkphp
+LICENSE.txt
+README.md
+swoole-ide-helper
+runtime
+upload

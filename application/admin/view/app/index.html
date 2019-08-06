@@ -1,0 +1,83 @@
+﻿{include file="public/_meta"}
+</head>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户中心 <span class="c-gray en">&gt;</span> APP管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+
+<body>
+<div class="page-container">
+  <div class="cl pd-5 bg-1 bk-gray mt-20">
+    <span class="l">
+			<a href="javascript:;" onclick="member_add('添加用户','{:url(\'app/add\')}','','','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 发布版本</a></span>
+    <span class="r">共有：<strong></strong> </span>
+  </div>
+  <table class="table table-border table-bordered table-hover table-bg table-sort">
+    <thead>
+    <tr class="text-c">
+      <th width="45"><input type="checkbox" name="" value=""></th>
+      <th width="60">App类型</th>
+      <th width="100">版本号</th>
+      <th width="110">发布时间</th>
+      <th width="70">是否强制更新</th>
+      <th width="150">App下载链接</th>
+      <th width="70">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {volist name="version" id="vo"}
+    <tr class="text-c">
+      <td><input type="checkbox" value="1" name=""></td>
+      <td>{$vo.app_type}</td>
+      <td>{$vo.version_code}</td>
+      <td>{$vo.create_time}</td>
+      <td>{$vo.is_force|isYesNo}</td>
+      <td>{$vo.apk_url}</td>
+      <td class="td-manage">
+
+        <a title="编辑" href="javascript:;" onclick="member_edit('编辑','{:url(\'app/edit\')}','{$vo.id}','','600')" class="ml-5" style="text-decoration:none">
+          <i class="Hui-iconfont">&#xe6df;
+          </i>
+        </a>
+        <a title="删除" href="javascript:;" onclick='member_del(this)'
+           class="ml-5" style="text-decoration:none"
+           del_url="{:url('app/vDelete',['id'=>$vo.id])}">
+          <i class="Hui-iconfont">&#xe6e2;
+          </i>
+        </a>
+      </td>
+    </tr>
+    {/volist}
+    </tbody>
+  </table>
+  <div id="pageNav" class="pageNav"></div>
+</div>
+{include file="public/_footer"}
+<script>
+    /*用户-编辑*/
+    function member_add(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*用户-编辑*/
+    function member_edit(title,url,id,w,h){
+        url = url +'?id='+id;
+        layer_show(title,url,w,h);
+    }
+    /*用户-删除*/
+    function member_del(obj,id){
+        url = $(obj).attr('del_url');
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type: 'POST',
+                url: url,
+                dataType: 'json',
+                success: function(data){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                },
+                error:function(data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+</script>
+</body>
+</html>
